@@ -769,7 +769,7 @@ pub fn run() {
             }
             let root = dirs::home_dir().context("find home directory")?.join(".autojev");
             let database = if app.config().identifier.ends_with(".dev") { "autojev-dev.db" } else { "autojev.db" };
-            let store = Arc::new(ConfigStore::load(root.join(database))?);
+            let store = Arc::new(ConfigStore::open(root.join(database))?);
             let port = if app.config().identifier.ends_with(".dev") { config::DEV_PORT } else { config::DEFAULT_PORT };
             app.manage(lifecycle::lock(port)?);
             lifecycle::spawn_watchdog(port)?;

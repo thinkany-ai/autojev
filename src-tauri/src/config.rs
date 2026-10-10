@@ -251,7 +251,18 @@ pub struct ConfigStore {
 }
 
 impl ConfigStore {
-    pub fn load(path: PathBuf) -> Result<Self> {
+    pub fn load(path: PathBuf) -> Result<Self> { Self::load_with(path, AppConfig::default) }
+    /// Opens the app database; a new install starts without placeholder providers or models.
+    pub fn open(path: PathBuf) -> Result<Self> {
+        Self::load_with(path, || {
+            let mut value = AppConfig::default();
+            value.providers.clear();
+            value.models.clear();
+            value.policy.savings_baseline_model_id = None;
+            value
+        })
+    }
+    fn load_with(path: PathBuf, seed: impl FnOnce() -> AppConfig) -> Result<Self> {
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent).context("create AutoJev data directory")?;
             #[cfg(unix)] {
@@ -271,7 +282,7 @@ impl ConfigStore {
         let mut value: AppConfig = if let Some(data) = stored {
             serde_json::from_str(&data).context("parse AutoJev database configuration")?
         } else {
-            let value = AppConfig::default();
+            let value = seed();
             transaction.execute("INSERT INTO app_meta (key, value) VALUES ('config', ?1)", [serde_json::to_string(&value)?])?;
             value
         };
@@ -520,3 +531,16 @@ mod request_log_tests {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RouteModelSettings { pub priority: u32, pub weight: u32 }
+#[cfg(test)]
+mod fresh_install_tests {
+    #[test]
+    fn new_install_has_no_placeholder_providers_and_existing_data_is_kept() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("autojev.db");
+        let fresh = super::ConfigStore::open(path.clone()).unwrap().read();
+        assert!(fresh.providers.is_empty() && fresh.models.is_empty() && fresh.policy.savings_baseline_model_id.is_none());
+        let seeded = dir.path().join("seeded.db");
+        super::ConfigStore::load(seeded.clone()).unwrap();
+        assert_eq!(super::ConfigStore::open(seeded).unwrap().read().providers.len(), 2);
+    }
+}
