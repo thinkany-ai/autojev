@@ -34,7 +34,7 @@ export function useModelSpeedTests() {
     toggle: (id: string) => setSelected(ids => ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id]),
     select: setSelected,
     start: (ids: string[]) => {
-      if (!ids.length) { setError('Select models before running a speed test.'); return Promise.resolve(); }
+      if (!ids.length) { setError('No enabled models to speed test.'); return Promise.resolve(); }
       return act(() => startModelSpeedTests(ids));
     },
     cancel: () => act(cancelModelSpeedTests),
@@ -49,7 +49,12 @@ export function SpeedTestToolbar({ tests, models }: { tests: ReturnType<typeof u
     {running ? <>
       <span role="status" className="model-speed-count"><LoaderCircle size={14} className="import-spinner"/>{t('Completed')} {tests.view?.job.completed_models}/{tests.view?.job.total_models}</span>
       <button className="button ghost" disabled={tests.busy} onClick={() => void tests.cancel()}>{t('Stop speed tests')}</button>
-    </> : <button className="button ghost" disabled={tests.busy} onClick={() => void tests.start(selected.map(m => m.id))}><CircleGauge size={16}/>{t(selected.length ? 'Test selected' : 'Speed test')}{selected.length ? ` (${selected.length})` : ''}</button>}
+    </> : <button className="button ghost" disabled={tests.busy} onClick={() => {
+      // With nothing checked, test every enabled model and show them as checked.
+      const ids = (selected.length ? selected : models).map(m => m.id);
+      if (!selected.length) tests.select(ids);
+      void tests.start(ids);
+    }}><CircleGauge size={16}/>{t(selected.length ? 'Test selected' : 'Speed test')}{selected.length ? ` (${selected.length})` : ''}</button>}
   </div>;
 }
 

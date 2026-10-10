@@ -626,7 +626,6 @@
   "Speed test": "测速",
   "Automatic speed tests": "自动测速",
   "Retest models without recent measurements while the app is running. Tests incur API usage.": "应用运行时自动补测缺少近期数据的模型，会产生 API 调用费用。",
-  "Select models before running a speed test.": "请先勾选要测速的模型。",
   "Speed test failed": "测速失败",
   "Completed": "已完成",
   "Close": "关闭",
@@ -794,5 +793,6 @@
   "Agent disconnected; configuration update skipped.": "智能体已断开，已跳过配置更新。",
   "Logs": "请求日志",
   "Usage": "用量统计",
-  "Route every request to the right model.": "为每次请求选择合适的模型。"
+  "Route every request to the right model.": "为每次请求选择合适的模型。",
+  "No enabled models to speed test.": "没有可测速的已启用模型。"
 }
