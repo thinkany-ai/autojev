@@ -364,14 +364,41 @@ pub fn restore_for_gateway(id:&str,port:u16)->Result<()> {
     restore_at(id,&home)
 }
 
+// GUI apps start with launchd's minimal PATH; agents installed via ~/.local/bin, npm prefixes or version
+// managers are only on the PATH an interactive login shell builds, so resolve it once and reuse it.
+pub fn user_path() -> &'static std::ffi::OsString {
+    static PATH: std::sync::OnceLock<std::ffi::OsString> = std::sync::OnceLock::new();
+    PATH.get_or_init(|| {
+        let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".into());
+        let fallback = std::env::var_os("PATH").unwrap_or_default();
+        let resolve = |flags: &str| -> Option<std::ffi::OsString> {
+            let mut child = Command::new(&shell).args([flags, "printf '\\n__AUTOJEV_PATH__%s\\n' \"$PATH\""])
+                .stdin(std::process::Stdio::null()).stdout(std::process::Stdio::piped()).stderr(std::process::Stdio::null())
+                .spawn().ok()?;
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+            while child.try_wait().ok()?.is_none() {
+                if std::time::Instant::now() > deadline { let _ = child.kill(); let _ = child.wait(); return None; }
+                std::thread::sleep(std::time::Duration::from_millis(20));
+            }
+            let mut out = String::new();
+            std::io::Read::read_to_string(child.stdout.as_mut()?, &mut out).ok()?;
+            out.lines().rev().find_map(|l| l.strip_prefix("__AUTOJEV_PATH__")).filter(|p| !p.is_empty()).map(Into::into)
+        };
+        let resolved = resolve("-ilc").or_else(|| resolve("-lc")).unwrap_or_else(|| fallback.clone());
+        // Keep the app's own PATH entries as a tail so nothing previously reachable disappears.
+        std::env::join_paths(std::env::split_paths(&resolved).chain(std::env::split_paths(&fallback))).unwrap_or(resolved)
+    })
+}
 fn executable_path(command: &str) -> Option<String> {
-    let output = Command::new(std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".into()))
-        .args(["-lc", "command -v -- \"$1\"", "autojev-detect", command])
-        .output().ok()?;
-    if !output.status.success() { return None; }
-    String::from_utf8_lossy(&output.stdout).lines().rev()
-        .map(str::trim).find(|line| Path::new(line).is_absolute() && Path::new(line).is_file())
-        .map(str::to_owned)
+    use std::os::unix::fs::PermissionsExt;
+    let runnable = |p: &Path| p.metadata().map(|m| m.is_file() && m.permissions().mode() & 0o111 != 0).unwrap_or(false);
+    if command.is_empty() { return None; }
+    if command.contains('/') {
+        let path = Path::new(command);
+        return (path.is_absolute() && runnable(path)).then(|| command.to_owned());
+    }
+    std::env::split_paths(user_path()).filter(|d| d.is_absolute()).map(|d| d.join(command))
+        .find(|p| runnable(p)).map(|p| p.to_string_lossy().into_owned())
 }
 fn command_exists(command: &str) -> bool { executable_path(command).is_some() }
 
@@ -422,11 +449,23 @@ pub fn prompt_args(args: &[String], prompt: &str) -> Vec<String> {
     if !args.iter().any(|a| a.contains("{prompt}")) { result.push(prompt.into()); }
     result
 }
+// One-shot prompt syntax for CLIs whose bare positional argument is a subcommand, used when no arguments are given.
+fn default_prompt_args(path: &str) -> Vec<String> {
+    let args: &[&str] = match Path::new(path).file_name().and_then(|n| n.to_str()).unwrap_or_default() {
+        "hermes" => &["-z", "{prompt}"],
+        "openclaw" => &["agent", "-m", "{prompt}"],
+        "claude" | "gemini" => &["-p", "{prompt}"],
+        "codex" => &["exec", "{prompt}"],
+        _ => &[],
+    };
+    args.iter().map(|a| a.to_string()).collect()
+}
 pub async fn test_custom(agent: CustomAgent) -> Result<String> {
     validate_custom(&agent)?;
     let path = executable_path(agent.command.trim()).ok_or_else(|| anyhow!("Agent executable not found"))?;
+    let args = if agent.args.is_empty() { default_prompt_args(&path) } else { agent.args.clone() };
     let mut command = tokio::process::Command::new(path);
-    command.args(prompt_args(&agent.args, "Reply with OK only."))
+    command.args(prompt_args(&args, "Reply with OK only.")).env("PATH", user_path())
         .stdin(std::process::Stdio::null()).kill_on_drop(true);
     let output = tokio::time::timeout(std::time::Duration::from_secs(60), command.output())
         .await.map_err(|_| anyhow!("Agent test timed out after 60 seconds"))??;
