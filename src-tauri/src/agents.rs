@@ -390,14 +390,22 @@ pub fn user_path() -> &'static std::ffi::OsString {
     })
 }
 fn executable_path(command: &str) -> Option<String> {
-    use std::os::unix::fs::PermissionsExt;
-    let runnable = |p: &Path| p.metadata().map(|m| m.is_file() && m.permissions().mode() & 0o111 != 0).unwrap_or(false);
+    #[cfg(unix)]
+    let runnable = |p: &Path| { use std::os::unix::fs::PermissionsExt; p.metadata().map(|m| m.is_file() && m.permissions().mode() & 0o111 != 0).unwrap_or(false) };
+    #[cfg(not(unix))]
+    let runnable = |p: &Path| p.is_file();
+    // Windows resolves bare names through PATHEXT (hermes -> hermes.exe / hermes.cmd).
+    let extensions: Vec<String> = if cfg!(windows) && Path::new(command).extension().is_none() {
+        std::env::var("PATHEXT").unwrap_or_else(|_| ".EXE;.CMD;.BAT;.COM".into()).split(';').filter(|e| !e.is_empty()).map(str::to_owned).collect()
+    } else { vec![String::new()] };
+    let candidates = |base: PathBuf| extensions.iter().map(move |e| { let mut p = base.clone().into_os_string(); p.push(e); PathBuf::from(p) });
     if command.is_empty() { return None; }
-    if command.contains('/') {
+    if command.contains('/') || command.contains(std::path::MAIN_SEPARATOR) {
         let path = Path::new(command);
-        return (path.is_absolute() && runnable(path)).then(|| command.to_owned());
+        if !path.is_absolute() { return None; }
+        return candidates(path.to_path_buf()).find(|p| runnable(p)).map(|p| p.to_string_lossy().into_owned());
     }
-    std::env::split_paths(user_path()).filter(|d| d.is_absolute()).map(|d| d.join(command))
+    std::env::split_paths(user_path()).filter(|d| d.is_absolute()).flat_map(|d| candidates(d.join(command)))
         .find(|p| runnable(p)).map(|p| p.to_string_lossy().into_owned())
 }
 fn command_exists(command: &str) -> bool { executable_path(command).is_some() }
