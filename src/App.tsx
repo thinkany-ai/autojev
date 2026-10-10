@@ -3,6 +3,8 @@ import { GatewayActionMenu } from './components/gateway-action-menu';
 import { AGENT_SELECTIONS_KEY, availableAgentSelections, parseAgentSelections } from './lib/agent-selections';
 import { SpeedCell, SpeedTestToolbar, useModelSpeedTests } from './components/model-speed-tests';
 import { listen } from '@tauri-apps/api/event';
+import { isTauri } from '@tauri-apps/api/core';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { DebugPage } from './components/debug-page';
 import { WindowFrame } from './components/window-frame';
 import { TrafficPage } from './components/traffic-page';
@@ -142,6 +144,8 @@ export default function App() {
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === ',') { event.preventDefault(); setSettingsOpen(true); }
+      // The frameless window has no native close command, so handle ⌘W / Ctrl+W here; closing hides to the menu bar.
+      if ((event.metaKey || event.ctrlKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'w' && isTauri()) { event.preventDefault(); void getCurrentWindow().close(); }
     };
     window.addEventListener('keydown', shortcut);
     return () => window.removeEventListener('keydown', shortcut);

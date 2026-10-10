@@ -743,7 +743,17 @@ fn validate_model(config: &AppConfig, model: &Model) -> anyhow::Result<()> {
 
 static EXIT_READY: std::sync::atomic::AtomicBool=std::sync::atomic::AtomicBool::new(false);
 static EXIT_PENDING: std::sync::atomic::AtomicBool=std::sync::atomic::AtomicBool::new(false);
-fn show_main(app:&tauri::AppHandle){if let Some(w)=app.get_webview_window("main"){let _=w.show();let _=w.set_focus();}}
+fn show_main(app:&tauri::AppHandle){
+    // The Dock icon only appears while the main window is open; the menu bar icon stays as the entry point.
+    #[cfg(target_os="macos")]
+    let _=app.set_activation_policy(tauri::ActivationPolicy::Regular);
+    if let Some(w)=app.get_webview_window("main"){let _=w.show();let _=w.unminimize();let _=w.set_focus();}
+}
+fn hide_main(window:&tauri::Window){
+    let _=window.hide();
+    #[cfg(target_os="macos")]
+    let _=window.app_handle().set_activation_policy(tauri::ActivationPolicy::Accessory);
+}
 fn request_safe_exit(app:tauri::AppHandle){
     use std::sync::atomic::Ordering;
     if EXIT_PENDING.swap(true,Ordering::SeqCst){return;}
@@ -761,7 +771,7 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_opener::init())
-        .on_window_event(|window,event|{if let tauri::WindowEvent::CloseRequested{api,..}=event{api.prevent_close();let _=window.hide();}})
+        .on_window_event(|window,event|{if let tauri::WindowEvent::CloseRequested{api,..}=event{api.prevent_close();hide_main(window);}})
         .setup(|app| {
             if let Some(window) = app.get_webview_window("main") {
                 window.set_decorations(false)?;
@@ -800,7 +810,10 @@ pub fn run() {
             let show=tauri::menu::MenuItem::with_id(app,"show","Open AutoJev",true,None::<&str>)?;
             let quit=tauri::menu::MenuItem::with_id(app,"safe-quit","Quit AutoJev (restore agents)",true,None::<&str>)?;
             let menu=tauri::menu::Menu::with_items(app,&[&show,&quit])?;
-            let mut tray=tauri::tray::TrayIconBuilder::new().tooltip("AutoJev").menu(&menu).on_menu_event(|app,event|match event.id.as_ref(){"show"=>show_main(app),"safe-quit"=>request_safe_exit(app.clone()),_=>{}});
+            let mut tray=tauri::tray::TrayIconBuilder::new().tooltip("AutoJev").menu(&menu).on_menu_event(|app,event|match event.id.as_ref(){"show"=>show_main(app),"safe-quit"=>request_safe_exit(app.clone()),_=>{}})
+                // Left click opens the app; right click shows the menu.
+                .show_menu_on_left_click(false)
+                .on_tray_icon_event(|tray,event|{if let tauri::tray::TrayIconEvent::Click{button:tauri::tray::MouseButton::Left,button_state:tauri::tray::MouseButtonState::Up,..}=event{show_main(tray.app_handle());}});
             #[cfg(target_os = "macos")]
             {
                 tray = tray.icon(tauri::include_image!("icons-tray/44x44.png")).icon_as_template(true);
