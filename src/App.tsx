@@ -1,4 +1,5 @@
 import { AddAgentDialog } from './components/add-agent-dialog';
+import { ConnectionParamsDialog } from './components/connection-params-dialog';
 import { GatewayActionMenu } from './components/gateway-action-menu';
 import { AGENT_SELECTIONS_KEY, availableAgentSelections, parseAgentSelections } from './lib/agent-selections';
 import { SpeedCell, SpeedTestToolbar, useModelSpeedTests } from './components/model-speed-tests';
@@ -36,6 +37,7 @@ import {
   EyeOff,
   GitBranch,
   KeyRound,
+  Link2,
   Layers3,
   Network,
   Play,
@@ -390,6 +392,7 @@ export default function App() {
 
 function Overview({ snapshot, go }: { snapshot: DashboardSnapshot; go: (page: Page) => void }) {
   const { t } = usePreferences();
+  const [showParams, setShowParams] = useState(false);
   const providers = snapshot.providers.filter((provider) => provider.enabled);
   const models = snapshot.models.filter((model) => model.enabled && providers.some((provider) => provider.id === model.provider_id));
   const [today, setToday] = useState<{ requests: number; tokens: number } | null>(null);
@@ -414,13 +417,14 @@ function Overview({ snapshot, go }: { snapshot: DashboardSnapshot; go: (page: Pa
   const running = snapshot.proxy.running && !snapshot.proxy.paused;
 
   return <div className="router-home">
+    {showParams && <ConnectionParamsDialog snapshot={snapshot} onClose={() => setShowParams(false)}/>}
     <section className="overview-intro">
       <p>{t('Route every request to the right model.')}</p>
       <button className="button ghost" onClick={() => go('agents')}><Bot size={16} />{t('Connect an agent')}</button>
     </section>
 
     <section className="router-map" aria-label={t('Routing topology')}>
-      <div className="router-map-bar"><span><Network size={14} /><code>127.0.0.1:{snapshot.proxy.port}</code></span><span className="status-line"><i className={cx('status-dot', running && 'online')} />{t(snapshot.proxy.paused ? 'Gateway paused' : running ? 'Proxy online' : 'Proxy stopped')}</span></div>
+      <div className="router-map-bar"><button className="router-map-endpoint" title={t('Connection parameters')} onClick={() => setShowParams(true)}><Network size={14} /><code>127.0.0.1:{snapshot.proxy.port}</code><Link2 size={13} /></button><span className="status-line"><i className={cx('status-dot', running && 'online')} />{t(snapshot.proxy.paused ? 'Gateway paused' : running ? 'Proxy online' : 'Proxy stopped')}</span></div>
       <div className={cx("router-map-body", running && "routing-active")}>
         <div className="router-endpoints">
           <span className="router-map-label">{t('Agents')}</span>
@@ -655,6 +659,7 @@ function AgentsPage({ snapshot, onRefresh, onConnect, onRestore, onChange, onMan
   const [detecting, setDetecting] = useState(false);
   const [error, setError] = useState('');
   const [adding, setAdding] = useState(false);
+  const [showParams, setShowParams] = useState(false);
   const [editingCustom, setEditingCustom] = useState<DashboardSnapshot['agents'][number] | undefined>();
   useEffect(() => {
     try { localStorage.setItem(AGENT_SELECTIONS_KEY, JSON.stringify(selections)); }
@@ -696,7 +701,8 @@ function AgentsPage({ snapshot, onRefresh, onConnect, onRestore, onChange, onMan
   return <div className="stack lg">
     {operationError && <ModelTestErrorDialog title="Agent operation failed" model={operationError.name} detail={operationError.detail} onClose={() => setOperationError(null)}/>}
     <PageIntro title={t('Agents')} body={t('Detected local agents. Select a route to connect to AutoJev.')} action={<div className="provider-actions agent-page-actions"><button className="button ghost" disabled={detecting || connecting || activeAgent !== null} onClick={() => void detect()}><RefreshCw size={16} className={detecting ? 'import-spinner' : ''}/>{t(detecting ? 'Detecting…' : 'Detect again')}</button><button className="button ghost" disabled={connecting || detecting || activeAgent !== null || !batchTargets.length} title={t('Update configurations for connected agents only. Disconnected agents remain disconnected.')} onClick={() => void injectAll()}>{batchProgress ? <LoaderCircle size={16} className="import-spinner"/> : <Plug size={16}/>} {batchProgress ? t('Updating {done}/{total}', batchProgress) : t('Batch update configurations')}</button><button className="button primary" disabled={connecting || activeAgent !== null} onClick={() => { setError(''); setEditingCustom(undefined); setAdding(true); }}><Plus size={16}/>{t('Add agent')}</button></div>} />
-    <div className="agent-list-toolbar"><div><button className="text-button" onClick={onManageRoutes}><GitBranch size={16}/>{t('Manage routes')}</button>{!availableRoutes.length && <p>{t('Create a route to use multiple models, or select a model directly.')}</p>}</div></div>
+    <div className="agent-list-toolbar"><div><button className="text-button" onClick={onManageRoutes}><GitBranch size={16}/>{t('Manage routes')}</button>{!availableRoutes.length && <p>{t('Create a route to use multiple models, or select a model directly.')}</p>}</div><button className="text-button" onClick={() => setShowParams(true)}><Link2 size={16}/>{t('Connect other clients manually')}</button></div>
+    {showParams && <ConnectionParamsDialog snapshot={snapshot} onClose={() => setShowParams(false)}/>}
     {batchResult && <div className="agent-batch-result" role="status">
       <div><strong>{t('Update complete: {success} succeeded, {failed} failed', { success: batchResult.succeeded.length, failed: batchResult.failed.length })}</strong><button className="icon-action" aria-label={t('Close')} onClick={() => setBatchResult(null)}><X size={15}/></button></div>
       {!!batchResult.succeeded.length && <p>{batchResult.succeeded.join(' · ')}<br/>{t('Restart the corresponding clients to refresh their model lists.')}</p>}

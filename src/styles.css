@@ -821,7 +821,7 @@ main.debug-main { height: 100dvh; min-height: 0; overflow: hidden; }
 .curl-result-toolbar .curl-metadata { padding: 0; gap: 6px 12px; min-width: 0; line-height: 1.6; font-size: 10px; }
 .curl-result-toolbar .debug-detail-button { flex-shrink: 0; white-space: nowrap; font-size: 11px; }
 
-.agent-list-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.agent-list-toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 
 .agent-config-paths { display: grid; gap: 4px; min-width: 0; }
 .agent-config-path { display: flex; align-items: center; gap: 6px; min-width: 0; }
@@ -852,3 +852,18 @@ main.debug-main { height: 100dvh; min-height: 0; overflow: hidden; }
 .overview-intro { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
 .overview-intro p { margin: 0; color: var(--text); font-size: 20px; font-weight: 500; line-height: 1.5; }
 .overview-intro .button { flex-shrink: 0; }
+.router-map-endpoint { display: flex; align-items: center; gap: 8px; margin: -4px -8px; padding: 4px 8px; border: 0; border-radius: var(--radius-sm, 7px); background: none; color: inherit; font: inherit; cursor: pointer; }
+.router-map-endpoint:hover { background: var(--inset); color: var(--text); }
+
+.connection-dialog { display: flex; flex-direction: column; gap: 16px; max-height: 88vh; overflow: auto; }
+.connection-dialog .provider-dialog-header { margin-bottom: 0; }
+.connection-dialog .route-error, .connection-dialog .add-agent-help { margin: 0; }
+.connection-model { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.connection-fields { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius, 10px); background: var(--inset); }
+.connection-field { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 6px 8px 6px 14px; }
+.connection-field + .connection-field { border-top: 1px solid var(--line); }
+.connection-field > span { color: var(--muted); font-size: 12px; }
+.connection-field code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; }
+.connection-snippet { border: 1px solid var(--line); border-radius: var(--radius, 10px); overflow: hidden; }
+.connection-snippet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px; border-bottom: 1px solid var(--line); }
+.connection-snippet pre { margin: 0; padding: 14px; overflow-x: auto; background: var(--inset); font: 12px/1.7 var(--mono); white-space: pre; }

@@ -794,5 +794,20 @@
   "Logs": "请求日志",
   "Usage": "用量统计",
   "Route every request to the right model.": "为每次请求选择合适的模型。",
-  "No enabled models to speed test.": "没有可测速的已启用模型。"
+  "No enabled models to speed test.": "没有可测速的已启用模型。",
+  "Connection parameters": "接入参数",
+  "Connect other clients manually": "手动接入其他客户端",
+  "Use these values in any client that supports a custom API endpoint (BYOK).": "在任何支持自定义 API 地址（BYOK）的客户端中填入以下参数。",
+  "The gateway is paused. Requests are rejected until you resume it.": "网关已暂停，恢复前请求会被拒绝。",
+  "The gateway is stopped. Start it before connecting a client.": "网关未启动，请先启动再接入客户端。",
+  "OpenAI compatible": "OpenAI 兼容",
+  "Anthropic clients add /v1/messages themselves, so the base URL has no /v1.": "Anthropic 客户端会自行拼接 /v1/messages，因此 Base URL 不带 /v1。",
+  "Format": "格式",
+  "Environment variables": "环境变量",
+  "Copy": "复制",
+  "Copy {name}": "复制 {name}",
+  "Could not copy to the clipboard": "无法复制到剪贴板",
+  "API protocol": "API 协议",
+  "Client name (optional)": "客户端名称（可选）",
+  "AutoJev does not check the key. Its suffix names the client in logs and usage; letters, digits, - and _ are kept.": "AutoJev 不校验 Key，后缀会作为客户端名称显示在日志和用量中；只保留字母、数字、- 和 _。"
 }
