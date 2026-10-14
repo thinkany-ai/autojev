@@ -1,6 +1,6 @@
 [package]
 name = "autojev"
-version = "0.1.6"
+version = "0.1.7"
 description = "A local model router for AI agents"
 authors = ["ThinkAny, LLC"]
 license = "MIT"
