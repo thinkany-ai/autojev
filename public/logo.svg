@@ -1,14 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 7 56 56" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="100 100 824 824" role="img" aria-labelledby="title">
   <title id="title">AutoJev</title>
-  <desc id="desc">A geometric A and J monogram shaped like a decision path converging upward.</desc>
   <defs>
-    <mask id="decision-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
-      <rect width="64" height="64" fill="white" />
-      <path fill="black" d="m32.8 20.2 8.1 11.3h-5v7.3h-6.2v-7.3h-5l8.1-11.3Z" />
-    </mask>
+    <linearGradient id="tile" x1="0" y1="0" x2="0.35" y2="1"><stop stop-color="#FF9B5E"/><stop offset="1" stop-color="#E8441A"/></linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#FFE6D6"/></linearGradient>
+    <mask id="notch"><rect width="1024" height="1024" fill="#fff"/><path d="M452 790Q512 700 572 790Z" fill="#000"/></mask>
   </defs>
-  <g fill="#D45A2A" mask="url(#decision-cutout)">
-    <path d="M7.5 48.5 25.7 14a7.1 7.1 0 0 1 12.6 0l18.2 34.5H44.2L39 38.2H24.9l-5.2 10.3H7.5Z" />
-    <path d="M37.2 32.2v15.2c0 7.5-4.7 11.6-12.2 11.6-4.2 0-7.7-1.6-10.1-4.5l6.2-6.2c1.2 1.4 2.5 2 4 2 2.2 0 3.4-1.2 3.4-3.7V32.2h8.7Z" />
-  </g>
+  <rect x="100" y="100" width="824" height="824" rx="190" fill="url(#tile)"/><path mask="url(#notch)" transform="translate(0 18)" fill="#A82E08" opacity=".22" d="M512 220C572 220 604 270 632 334L762 640C794 716 752 790 672 790H352C272 790 230 716 262 640L392 334C420 270 452 220 512 220Z"/><path mask="url(#notch)" fill="url(#body)" d="M512 220C572 220 604 270 632 334L762 640C794 716 752 790 672 790H352C272 790 230 716 262 640L392 334C420 270 452 220 512 220Z"/>
+  <g fill="#FF8A5C" opacity=".35"><ellipse cx="402" cy="636" rx="40" ry="22"/><ellipse cx="636" cy="636" rx="40" ry="22"/></g>
+  <g fill="#1B1D22"><ellipse cx="462" cy="540" rx="34" ry="54" transform="rotate(12 462 540)"/><ellipse cx="574" cy="540" rx="34" ry="54" transform="rotate(12 574 540)"/></g>
+  <g fill="#fff"><circle cx="476" cy="514" r="13"/><circle cx="588" cy="514" r="13"/></g>
 </svg>

@@ -1,11 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="4 7 56 56"><defs>
-    <mask id="decision-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
-      <rect width="64" height="64" fill="white" />
-      <path fill="black" d="m32.8 20.2 8.1 11.3h-5v7.3h-6.2v-7.3h-5l8.1-11.3Z" />
-    </mask>
-  </defs>
-  <g fill="#000000" mask="url(#decision-cutout)">
-    <path d="M7.5 48.5 25.7 14a7.1 7.1 0 0 1 12.6 0l18.2 34.5H44.2L39 38.2H24.9l-5.2 10.3H7.5Z" />
-    <path d="M37.2 32.2v15.2c0 7.5-4.7 11.6-12.2 11.6-4.2 0-7.7-1.6-10.1-4.5l6.2-6.2c1.2 1.4 2.5 2 4 2 2.2 0 3.4-1.2 3.4-3.7V32.2h8.7Z" />
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="196 190 632 632">
+  <mask id="face"><rect width="1024" height="1024" fill="#fff"/><path d="M452 790Q512 700 572 790Z" fill="#000"/><g fill="#000"><ellipse cx="462" cy="540" rx="34" ry="54" transform="rotate(12 462 540)"/><ellipse cx="574" cy="540" rx="34" ry="54" transform="rotate(12 574 540)"/></g></mask>
+  <path mask="url(#face)" fill="#000" d="M512 220C572 220 604 270 632 334L762 640C794 716 752 790 672 790H352C272 790 230 716 262 640L392 334C420 270 452 220 512 220Z"/>
 </svg>
