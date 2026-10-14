@@ -37,7 +37,7 @@
     "publisher": "ThinkAny, LLC",
     "homepage": "https://autojev.ai",
     "copyright": "Copyright 2026 ThinkAny, LLC",
-    "license": "AGPL-3.0-only",
+    "license": "MIT",
     "licenseFile": "../LICENSE",
     "resources": {
       "../LICENSE": "LICENSE",

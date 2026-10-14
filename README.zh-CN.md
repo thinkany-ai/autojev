@@ -8,7 +8,7 @@
   <a href="https://github.com/thinkany-ai/autojev/releases">下载</a> ·
   <a href="https://autojev.ai">网站</a> ·
   <a href="https://github.com/thinkany-ai/autojev/issues">反馈</a> ·
-  <a href="LICENSE">AGPL-3.0-only</a>
+  <a href="LICENSE">MIT</a>
 </p>
 
 AutoJev 是基于 Tauri、React 和 Rust 的桌面应用。集中管理服务商、模型和路由，让 Codex、Claude Code、Hermes 等智能体通过同一个本地地址调用模型。
@@ -172,6 +172,6 @@ docs/              协议说明和发布文档
 
 欢迎提交 Issue 和 PR。参与开发请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)，安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。
 
-AutoJev 源代码使用 **[AGPL-3.0-only](LICENSE)**，© 2026 ThinkAny, LLC。修改后的版本通过网络提供服务时，须按协议向交互用户提供对应源码。需要不受 AGPL copyleft 义务约束的商业授权，请联系 [support@thinkany.ai](mailto:support@thinkany.ai)。
+AutoJev 源代码使用 **[MIT 协议](LICENSE)**，© 2026 ThinkAny, LLC。
 
 第三方图标及其他资源保留各自许可，见 [NOTICE](NOTICE) 和资源目录中的许可证。AutoJev 名称与标志的使用见 [TRADEMARKS.md](TRADEMARKS.md)。

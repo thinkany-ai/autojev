@@ -8,7 +8,7 @@
   <a href="https://github.com/thinkany-ai/autojev/releases">Download</a> ·
   <a href="https://autojev.ai">Website</a> ·
   <a href="https://github.com/thinkany-ai/autojev/issues">Issues</a> ·
-  <a href="LICENSE">AGPL-3.0-only</a>
+  <a href="LICENSE">MIT</a>
 </p>
 
 AutoJev is a desktop app built with Tauri, React, and Rust. Manage providers, models, and routing rules in one place, and connect agents such as Codex, Claude Code, and Hermes through a single local endpoint.
@@ -172,6 +172,6 @@ docs/               Protocol notes and release documentation
 
 Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before contributing, and report security issues privately as described in [SECURITY.md](SECURITY.md).
 
-AutoJev source code is licensed under **[AGPL-3.0-only](LICENSE)**, © 2026 ThinkAny, LLC. If you offer a modified version over a network, the license requires you to make the corresponding source available to users interacting with it. For commercial licensing without AGPL copyleft obligations, contact [support@thinkany.ai](mailto:support@thinkany.ai).
+AutoJev source code is licensed under the **[MIT License](LICENSE)**, © 2026 ThinkAny, LLC.
 
 Third-party icons and other assets retain their respective licenses; see [NOTICE](NOTICE) and the license files in the asset directories. Use of the AutoJev name and logo is covered by [TRADEMARKS.md](TRADEMARKS.md).

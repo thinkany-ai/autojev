@@ -11,14 +11,13 @@ if (process.env.GITHUB_REF_TYPE === 'tag') {
   assert.equal(process.env.GITHUB_REF_NAME, `v${pkg.version}`, 'Tag must match the app version');
 }
 assert.equal(config.bundle.createUpdaterArtifacts, true);
-assert.equal(pkg.license, 'AGPL-3.0-only');
-assert.equal(config.bundle.license, 'AGPL-3.0-only');
+assert.equal(pkg.license, 'MIT');
+assert.equal(config.bundle.license, 'MIT');
 assert.equal(config.bundle.licenseFile, '../LICENSE');
 const licenseText = readFileSync('LICENSE', 'utf8');
-assert.match(licenseText, /^AutoJev\n/);
-assert.match(licenseText, /GNU AFFERO GENERAL PUBLIC LICENSE/);
-assert.match(licenseText, /Version 3, 19 November 2007/);
-assert.match(readFileSync('src-tauri/Cargo.toml', 'utf8'), /^license = "AGPL-3.0-only"$/m);
+assert.match(licenseText, /^MIT License\n/);
+assert.match(licenseText, /Copyright \(c\) 2026 ThinkAny, LLC/);
+assert.match(readFileSync('src-tauri/Cargo.toml', 'utf8'), /^license = "MIT"$/m);
 assert.equal(JSON.parse(readFileSync('src-tauri/capabilities/default.json', 'utf8')).permissions.includes('updater:default'), true);
 const publicKey = Buffer.from(config.plugins.updater.pubkey, 'base64').toString('utf8');
 assert.match(publicKey, /^untrusted comment: minisign public key:/, 'Invalid updater public key');

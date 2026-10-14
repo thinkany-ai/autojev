@@ -37,7 +37,7 @@ pnpm tauri build --no-bundle
 
 A useful pull request explains the problem, the behavior after the change, how it was verified, and any security or compatibility impact. Include screenshots for interface changes.
 
-Commits contributed intentionally to this repository are licensed under AGPL-3.0-only as described in the project license. We use the [Developer Certificate of Origin](https://developercertificate.org/) for contribution sign-off. Add a sign-off with:
+Commits contributed intentionally to this repository are licensed under the MIT License as described in the project license. We use the [Developer Certificate of Origin](https://developercertificate.org/) for contribution sign-off. Add a sign-off with:
 
 ```bash
 git commit -s

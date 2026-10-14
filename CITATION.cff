@@ -6,6 +6,6 @@ authors:
   - name: ThinkAny, LLC
 repository-code: https://github.com/thinkany-ai/autojev
 url: https://autojev.ai
-license: AGPL-3.0-only
+license: MIT
 version: 0.1.0
 date-released: 2026-09-20

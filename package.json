@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.6",
   "description": "A local model router for AI agents.",
-  "license": "AGPL-3.0-only",
+  "license": "MIT",
   "author": "ThinkAny, LLC",
   "homepage": "https://autojev.ai",
   "repository": {
